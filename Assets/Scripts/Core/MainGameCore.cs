@@ -2,17 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainGameCore : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+namespace Core {
+    /// <summary> Управляет инициализацией контроллеров и их взаимодействиями с данными </summary>
+    public class MainGameCore : MonoBehaviour {
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private BaseController[] _controllers;
+
+        private void Start() {
+            CreateControllers();
+            StartControllers();
+        }
+
+        private void CreateControllers() {
+            _controllers = new BaseController[] {
+                new GlobalControllers.ModulesController()
+            };
+        }
+
+        private void StartControllers() {
+            foreach (BaseController controller in _controllers) {
+                controller.StartController();
+            }
+        }
     }
 }

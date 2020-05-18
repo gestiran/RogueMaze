@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainLevelGenerator : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+namespace Modules.LevelGenerator {
 
-    // Update is called once per frame
-    void Update()
+    public class MainLevelGenerator : BaseModule
     {
-        
+        public override void Init()
+        {
+            
+        }
     }
 }
