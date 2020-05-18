@@ -24,7 +24,7 @@ namespace GlobalControllers {
 
         /// <summary> Инициализация модулей </summary>
         private void InitModules() {
-            for (int moduleId = 0; moduleId < _gameModules.Length; moduleId++) _gameModules[moduleId].Init();
+            foreach (BaseModule module in _gameModules) module.Init();
         }
     }
 }
