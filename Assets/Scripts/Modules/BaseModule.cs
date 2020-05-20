@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 
 namespace Modules {
-    /// <summary> Описывает модуль </summary>
-    public abstract class BaseModule {
+    public abstract class BaseModule : ScriptableObject {
+        [HideInInspector] public bool isEnable;
+
         public abstract void Init();
+        public abstract void Destroy();
     }
 }
