@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
 
 namespace Structures {
-    public struct IntCoord {
-        public int x;
-        public int y;
+    public struct mapCoord {
+        public ushort x;
+        public ushort y;
 
-        public IntCoord(int x, int y) {
+        public mapCoord(int x, int y) {
+            this.x = (ushort)x;
+            this.y = (ushort)y;
+        }
+
+        public mapCoord(ushort x, ushort y) {
             this.x = x;
             this.y = y;
         }

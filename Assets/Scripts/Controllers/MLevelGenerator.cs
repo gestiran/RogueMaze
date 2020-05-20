@@ -8,21 +8,23 @@ namespace Modules {
     [CreateAssetMenu(fileName = "level_generator", menuName = "Modules/Level generator")]
     public class MLevelGenerator : BaseModule {
         [SerializeField] private MapMeshData _meshData;
-        [SerializeField] private int _mapHeigth;
-        [SerializeField] private int _mapWidth;
-        [SerializeField] private int _pathIterations;
+        [SerializeField] private ushort _mapHeigth;
+        [SerializeField] private ushort _mapWidth;
+        [SerializeField] private ushort _minLevels;
+        [SerializeField] private ushort _pathIterations;
 
-        [SerializeField] [Range(0, 100)] private int _spawnRandomize = 50;
+        [SerializeField] [Range(0, 100)] private ushort _spawnRandomize = 50;
 
         private Transform _levelparent;
-        private int[,] _mapCoord;
-        private IntCoord _thisCoord;
+        private ushort[,,] _mapCoord;
+        
+        private mapCoord _thisCoord;
         
         #region INIT
 
         public override void Init() {
             _levelparent = GameObject.FindGameObjectWithTag("Level").transform;
-            _mapCoord = new int[_mapWidth, _mapHeigth];
+            _mapCoord = new ushort[_mapWidth, _mapHeigth, _minLevels];
 
             if (_meshData != null || _levelparent != null) GenerateMap();
         }
@@ -34,15 +36,20 @@ namespace Modules {
         #region METHODS
 
         private void GenerateMap() {
-            IntCoord spawnCoord = FindCoordinate();
-            IntCoord newSpawnCoord = spawnCoord;
+            GenerateDownLayer();
+            for (ushort zCoordLevel = 1; zCoordLevel < _minLevels; zCoordLevel++) GenerateUpLayer(zCoordLevel);
+        }
 
-            for (int iterate = 0, loopFix = 0; iterate < _pathIterations && loopFix < _pathIterations * 4; loopFix++) {
+        private void GenerateDownLayer() {
+            mapCoord spawnCoord = FindCoordinate();
+            mapCoord newSpawnCoord = spawnCoord;
+
+            for (ushort iterate = 0, loopFix = 0; iterate < _pathIterations && loopFix < _pathIterations * 4; loopFix++) {
                 newSpawnCoord = RandomiseCoord(newSpawnCoord);
 
-                if (_mapCoord[newSpawnCoord.x, newSpawnCoord.y] == 0) {
+                if (_mapCoord[newSpawnCoord.x, newSpawnCoord.y, 0] == 0) {
                     GameObject newTile = _meshData.baseBlock;
-                    _mapCoord[newSpawnCoord.x, newSpawnCoord.y] = 1;
+                    _mapCoord[newSpawnCoord.x, newSpawnCoord.y, 0] = 1;
                     spawnCoord = newSpawnCoord;
 
                     GameObject.Instantiate(newTile, spawnCoord.ToVector3(), newTile.transform.rotation, _levelparent);
@@ -52,18 +59,54 @@ namespace Modules {
             }
         }
 
-        private IntCoord RandomiseCoord(IntCoord coord) {
-            if (coord.y < _mapHeigth - 1 && coord.y > 0 && Random.Range(0, 100) < _spawnRandomize) coord.y = (Random.Range(0, 100) < _spawnRandomize) ? coord.y + 1 : coord.y - 1;
-            else if (coord.x < _mapWidth - 1 && coord.x > 0 && Random.Range(0, 100) < _spawnRandomize) coord.x = (Random.Range(0, 100) < _spawnRandomize) ? coord.x + 1 : coord.x - 1;
-            else if (coord.x == 0 && _mapCoord[coord.x + 1, coord.y] == 0) coord.x++;
-            else if (coord.x == _mapWidth - 1 && _mapCoord[coord.x - 1, coord.y] == 0) coord.x--;
-            else if (coord.y == 0 && _mapCoord[coord.x, coord.y + 1] == 0) coord.y++;
-            else if (coord.y == _mapHeigth - 1 && _mapCoord[coord.x, coord.y - 1] == 0) coord.y--;
+        private void GenerateUpLayer(ushort zCoord) {
+            byte neighborCunter = 0;
+
+            zCoord--;
+            for (ushort xCoord = 1; xCoord < _mapWidth - 1; xCoord++) {
+                for (ushort yCoord = 1; yCoord < _mapHeigth - 1; yCoord++) {
+                    neighborCunter = ChechNeighbor(new mapCoord(xCoord, yCoord), zCoord);
+
+                    if (neighborCunter > 3 && _mapCoord[xCoord, yCoord, zCoord] != 0) {
+                        GameObject newTile = _meshData.baseBlock;
+                        _mapCoord[xCoord, yCoord, zCoord + 1] = 1;
+
+                        GameObject.Instantiate(newTile, new Vector3(xCoord, zCoord + 1, yCoord), newTile.transform.rotation, _levelparent);
+                    }
+
+                    neighborCunter = 0;
+                }
+            }
+        }
+
+        /// <summary>  </summary>
+        private byte ChechNeighbor(mapCoord coord, ushort level = 0) {
+            byte counter = 0;
+
+            if (_mapCoord[coord.x - 1, coord.y, level] != 0) counter++;
+            if (_mapCoord[coord.x + 1, coord.y, level] != 0) counter++;
+            if (_mapCoord[coord.x, coord.y - 1, level] != 0) counter++;
+            if (_mapCoord[coord.x, coord.y + 1, level] != 0) counter++;
+
+            return counter;
+        }
+
+        private mapCoord RandomiseCoord(mapCoord coord, ushort level = 0) {
+            if (coord.y < _mapHeigth - 1 && coord.y > 0 && Random.Range(0, 100) < _spawnRandomize) {
+                if (Random.Range(0, 100) < _spawnRandomize) coord.y++;
+                else coord.y--;
+            } else if (coord.x < _mapWidth - 1 && coord.x > 0 && Random.Range(0, 100) < _spawnRandomize) {
+                if (Random.Range(0, 100) < _spawnRandomize) coord.x++;
+                else coord.x--;
+            } else if (coord.x == 0 && _mapCoord[coord.x + 1, coord.y, level] == 0) coord.x++;
+            else if (coord.x == _mapWidth - 1 && _mapCoord[coord.x - 1, coord.y, level] == 0) coord.x--;
+            else if (coord.y == 0 && _mapCoord[coord.x, coord.y + 1, level] == 0) coord.y++;
+            else if (coord.y == _mapHeigth - 1 && _mapCoord[coord.x, coord.y - 1, level] == 0) coord.y--;
 
             return coord;
         }
 
-        private IntCoord FindCoordinate() => new IntCoord(Random.Range(_mapWidth / 4, _mapWidth / 2), Random.Range(_mapHeigth / 4, _mapHeigth / 2));
+        private mapCoord FindCoordinate() => new mapCoord(Random.Range(_mapWidth / 4, _mapWidth / 2), Random.Range(_mapHeigth / 4, _mapHeigth / 2));
 
         #endregion
     }
