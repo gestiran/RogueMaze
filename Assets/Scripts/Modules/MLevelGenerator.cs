@@ -12,7 +12,7 @@ namespace Modules {
         [SerializeField] private ushort _mapHeigth;
         [SerializeField] private ushort _mapWidth;
         [SerializeField] private ushort _minLevels;
-        [SerializeField] private ushort _pathIterations;
+        private ushort _pathIterations;
 
         private Transform _levelparent;
         private ushort[,,] _mapCoord;
@@ -24,6 +24,7 @@ namespace Modules {
         public override void Init() {
             _levelparent = GameObject.FindGameObjectWithTag("Level").transform;
             _mapCoord = new ushort[_mapWidth, _mapHeigth, _minLevels];
+            _pathIterations = (ushort)((_mapWidth + _mapHeigth) / 2);
 
             if (_meshData != null || _levelparent != null) GenerateMap();
         }
@@ -103,11 +104,11 @@ namespace Modules {
         /// <param name="level"> Уровень карты </param>
         /// <returns> Новые координаты </returns>
         private mapCoord RandomiseCoord(mapCoord coord, ushort level = 0) {
-            if (coord.y < _mapHeigth - 1 && coord.y > 0 && Random.Range(0, 100) < 50) {
-                if (Random.Range(0, 100) < 50) coord.y++;
+            if (coord.y < _mapHeigth - 1 && coord.y > 0 && Random.Range(0, 100) < 48) {
+                if (Random.Range(0, 100) < 48) coord.y++;
                 else coord.y--;
-            } else if (coord.x < _mapWidth - 1 && coord.x > 0 && Random.Range(0, 100) < 50) {
-                if (Random.Range(0, 100) < 50) coord.x++;
+            } else if (coord.x < _mapWidth - 1 && coord.x > 0 && Random.Range(0, 100) < 48) {
+                if (Random.Range(0, 100) < 48) coord.x++;
                 else coord.x--;
             } else if (coord.x == 0 && _mapCoord[coord.x + 1, coord.y, level] == 0) coord.x++;
             else if (coord.x == _mapWidth - 1 && _mapCoord[coord.x - 1, coord.y, level] == 0) coord.x--;
