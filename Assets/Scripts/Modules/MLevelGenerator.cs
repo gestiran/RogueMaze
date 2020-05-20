@@ -14,8 +14,6 @@ namespace Modules {
         [SerializeField] private ushort _minLevels;
         [SerializeField] private ushort _pathIterations;
 
-        [SerializeField] [Range(0, 100)] private ushort _spawnRandomize = 50;
-
         private Transform _levelparent;
         private ushort[,,] _mapCoord;
         
@@ -71,7 +69,12 @@ namespace Modules {
                 for (ushort yCoord = 1; yCoord < _mapHeigth - 1; yCoord++) {
                     neighborCunter = ChechNeighbor(new mapCoord(xCoord, yCoord), zCoord);
 
-                    if (neighborCunter > 3 && _mapCoord[xCoord, yCoord, zCoord] != 0) {
+                    if (neighborCunter > 2 && _mapCoord[xCoord, yCoord, zCoord] != 0 && Random.Range(0, 100) < 40) {
+                        GameObject newTile = _meshData.meshObjects[0];
+                        _mapCoord[xCoord, yCoord, zCoord + 1] = 1;
+
+                        GameObject.Instantiate(newTile, new Vector3(xCoord, zCoord + 1, yCoord), newTile.transform.rotation, _levelparent);
+                    } else if (neighborCunter > 3 && _mapCoord[xCoord, yCoord, zCoord] != 0 && Random.Range(0, 100) < 60) {
                         GameObject newTile = _meshData.meshObjects[0];
                         _mapCoord[xCoord, yCoord, zCoord + 1] = 1;
 
@@ -100,11 +103,11 @@ namespace Modules {
         /// <param name="level"> Уровень карты </param>
         /// <returns> Новые координаты </returns>
         private mapCoord RandomiseCoord(mapCoord coord, ushort level = 0) {
-            if (coord.y < _mapHeigth - 1 && coord.y > 0 && Random.Range(0, 100) < _spawnRandomize) {
-                if (Random.Range(0, 100) < _spawnRandomize) coord.y++;
+            if (coord.y < _mapHeigth - 1 && coord.y > 0 && Random.Range(0, 100) < 50) {
+                if (Random.Range(0, 100) < 50) coord.y++;
                 else coord.y--;
-            } else if (coord.x < _mapWidth - 1 && coord.x > 0 && Random.Range(0, 100) < _spawnRandomize) {
-                if (Random.Range(0, 100) < _spawnRandomize) coord.x++;
+            } else if (coord.x < _mapWidth - 1 && coord.x > 0 && Random.Range(0, 100) < 50) {
+                if (Random.Range(0, 100) < 50) coord.x++;
                 else coord.x--;
             } else if (coord.x == 0 && _mapCoord[coord.x + 1, coord.y, level] == 0) coord.x++;
             else if (coord.x == _mapWidth - 1 && _mapCoord[coord.x - 1, coord.y, level] == 0) coord.x--;
