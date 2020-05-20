@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d27271bd4ac61734d820e802fbfc40d1, type: 3}
-  m_Name: level_generator
+  m_Name: level_3
   m_EditorClassIdentifier: 
   isEnable: 1
   _meshData: {fileID: 11400000, guid: 564efb461da1dea40bdac873b69471cb, type: 2}
-  _mapHeigth: 200
-  _mapWidth: 200
-  _pathIterations: 50
-  _spawnRandomize: 45
+  _mapHeigth: 400
+  _mapWidth: 400
+  _minLevels: 2
+  _pathIterations: 100
+  _spawnRandomize: 50

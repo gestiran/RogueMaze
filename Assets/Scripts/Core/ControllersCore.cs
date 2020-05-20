@@ -2,6 +2,7 @@
 using Controllers;
 
 namespace Core {
+    /// <summary> Функционал игровых контроллеров </summary>
     [RequireComponent(typeof(GameCore))]
     public class ControllersCore : MonoBehaviour{
         [SerializeField] private BaseController[] _controllers;

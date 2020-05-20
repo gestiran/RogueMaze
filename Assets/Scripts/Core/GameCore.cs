@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 namespace Core {
+    /// <summary> Инициализация игрового процесса, главная точка входа в игру </summary>
     [RequireComponent(typeof(ModulesCore), typeof(ControllersCore))]
     public class GameCore : MonoBehaviour {
         public static GameCore instance;

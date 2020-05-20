@@ -5,6 +5,7 @@ using Structures;
 using UnityEngine;
 
 namespace Modules {
+    /// <summary> Реализовывает случайную генерацию уровня по заданным параметрам </summary>
     [CreateAssetMenu(fileName = "level_generator", menuName = "Modules/Level generator")]
     public class MLevelGenerator : BaseModule {
         [SerializeField] private MapMeshData _meshData;
@@ -35,11 +36,13 @@ namespace Modules {
 
         #region METHODS
 
+        /// <summary> Создание карты </summary>
         private void GenerateMap() {
             GenerateDownLayer();
             for (ushort zCoordLevel = 1; zCoordLevel < _minLevels; zCoordLevel++) GenerateUpLayer(zCoordLevel);
         }
 
+        /// <summary> Генерация нижнего уровня </summary>
         private void GenerateDownLayer() {
             mapCoord spawnCoord = FindCoordinate();
             mapCoord newSpawnCoord = spawnCoord;
@@ -48,7 +51,7 @@ namespace Modules {
                 newSpawnCoord = RandomiseCoord(newSpawnCoord);
 
                 if (_mapCoord[newSpawnCoord.x, newSpawnCoord.y, 0] == 0) {
-                    GameObject newTile = _meshData.baseBlock;
+                    GameObject newTile = _meshData.meshObjects[0];
                     _mapCoord[newSpawnCoord.x, newSpawnCoord.y, 0] = 1;
                     spawnCoord = newSpawnCoord;
 
@@ -59,6 +62,7 @@ namespace Modules {
             }
         }
 
+        /// <summary> Генерация уровня на указанной высоте </summary>
         private void GenerateUpLayer(ushort zCoord) {
             byte neighborCunter = 0;
 
@@ -68,7 +72,7 @@ namespace Modules {
                     neighborCunter = ChechNeighbor(new mapCoord(xCoord, yCoord), zCoord);
 
                     if (neighborCunter > 3 && _mapCoord[xCoord, yCoord, zCoord] != 0) {
-                        GameObject newTile = _meshData.baseBlock;
+                        GameObject newTile = _meshData.meshObjects[0];
                         _mapCoord[xCoord, yCoord, zCoord + 1] = 1;
 
                         GameObject.Instantiate(newTile, new Vector3(xCoord, zCoord + 1, yCoord), newTile.transform.rotation, _levelparent);
@@ -79,7 +83,7 @@ namespace Modules {
             }
         }
 
-        /// <summary>  </summary>
+        /// <summary> Проверка количества соседей </summary>
         private byte ChechNeighbor(mapCoord coord, ushort level = 0) {
             byte counter = 0;
 
@@ -91,6 +95,10 @@ namespace Modules {
             return counter;
         }
 
+        /// <summary> Поиск координаты следующей точки </summary>
+        /// <param name="coord"> Текущие координаты </param>
+        /// <param name="level"> Уровень карты </param>
+        /// <returns> Новые координаты </returns>
         private mapCoord RandomiseCoord(mapCoord coord, ushort level = 0) {
             if (coord.y < _mapHeigth - 1 && coord.y > 0 && Random.Range(0, 100) < _spawnRandomize) {
                 if (Random.Range(0, 100) < _spawnRandomize) coord.y++;
@@ -106,6 +114,7 @@ namespace Modules {
             return coord;
         }
 
+        /// <summary> Поиск случайных координат внутри игровой области </summary>
         private mapCoord FindCoordinate() => new mapCoord(Random.Range(_mapWidth / 4, _mapWidth / 2), Random.Range(_mapHeigth / 4, _mapHeigth / 2));
 
         #endregion

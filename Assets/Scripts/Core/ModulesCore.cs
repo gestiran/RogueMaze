@@ -2,6 +2,7 @@
 using Modules;
 
 namespace Core {
+    /// <summary> Функционал игровых модулей </summary>
     [RequireComponent(typeof(GameCore))]
     public class ModulesCore : MonoBehaviour {
         [SerializeField] private BaseModule[] _modules;
