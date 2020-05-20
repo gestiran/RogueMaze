@@ -308,10 +308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3f6809a4d565a498407562aed3d40e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _controllers:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  _controllers: []
 --- !u!114 &2061801998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,8 +322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _modules:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 3506fe59aa28d3f4fa3e562c92c251f4, type: 2}
 --- !u!114 &2061801999
 MonoBehaviour:
   m_ObjectHideFlags: 0

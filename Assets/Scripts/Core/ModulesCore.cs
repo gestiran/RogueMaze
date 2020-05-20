@@ -6,6 +6,13 @@ namespace Core {
     public class ModulesCore : MonoBehaviour {
         [SerializeField] private BaseModule[] _modules;
 
+        /// <summary> Сбросить состояние активации перед стартом </summary>
+        public void ResetAllModules() {
+            foreach (BaseModule module in _modules) {
+                if (module != null) module.isEnable = false;
+            }
+        }
+
         /// <summary> Подключает модуль </summary>
         public void InitModule(int moduleId) {
             if (moduleId < _modules.Length && _modules[moduleId] != null && !_modules[moduleId].isEnable) {

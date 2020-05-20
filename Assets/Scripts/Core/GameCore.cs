@@ -14,6 +14,9 @@ namespace Core {
             modulesCore = GetComponent<ModulesCore>();
             controllersCore = GetComponent<ControllersCore>();
 
+            modulesCore.ResetAllModules();
+            controllersCore.ResetAllControllers();
+
             modulesCore.InitAllModules();
             controllersCore.StartAllControllers();
         }

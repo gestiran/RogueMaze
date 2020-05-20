@@ -6,6 +6,13 @@ namespace Core {
     public class ControllersCore : MonoBehaviour{
         [SerializeField] private BaseController[] _controllers;
 
+        /// <summary> Сбросить состояние активации перед стартом </summary>
+        public void ResetAllControllers() {
+            foreach (BaseController controller in _controllers) {
+                if (controller != null) controller.stage = ControllerStage.Stopped;
+            }
+        }
+
         /// <summary> Запускает контроллер </summary>
         public void StartController(int controllerId) {
             if (controllerId < _controllers.Length && _controllers[controllerId] != null && _controllers[controllerId].stage == ControllerStage.Stopped) {
